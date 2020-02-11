@@ -14,20 +14,26 @@ namespace POI
         private const int DEFAULT_CAPACITY = 16;
         private const int DEFAULT_INDEX = 0;
         private int index = 0;
-        private int capacity;
-        private int lastIndex = 1;
+        private int capacity = 16;
+        private int wantedCapacity = -1;
         private T[] array;
         #endregion Members
         #region Constructor
-        public POIList(int capacity = 16)
+        public POIList()
+        {
+            this.array = new T[capacity];
+        }
+        public POIList(int capacity)
         {
             this.array = new T[capacity];
             this.capacity = capacity;
+            this.wantedCapacity = capacity;
         }
         public POIList(T[] otherList)
         {
             this.array = otherList;
             this.capacity = otherList.Length;
+            this.index = capacity;
         }
         #endregion Constructor
         #region Methods
@@ -38,10 +44,10 @@ namespace POI
         /// <param name="element">Element to be added.</param>
         public void Add(T element)
         {
+            if (wantedCapacity > 0 && wantedCapacity <= index) throw new Exception("The List is full.");
             if (index >= capacity) ExtendArray();
             array[index] = element;
             index++;
-            lastIndex++;
         }
         /// <summary>
         /// Add element to specific place.
@@ -50,20 +56,17 @@ namespace POI
         /// <param name="element">The element to be putted.</param>
         public void AddAt(int index, T element)
         {
+            if ((wantedCapacity > 0 && wantedCapacity <= index) || index >= capacity)
+            {
+                throw new IndexOutOfRangeException("The capacity of the List is less than the given index.");
+            }
             if (this.index == index)
             {
                 Add(element);
                 return;
             }
-            if (index >= capacity)
-            {
-                ExtendArray();
-                AddAt(index, element);
-                return;
-            }
             if (index > this.index)
             {
-                lastIndex = index;
                 this.index = index+1;
             }
             array[index] = element;
@@ -75,10 +78,11 @@ namespace POI
         /// <returns>The element.</returns>
         public T Get(int index)
         {
+            if (index >= capacity) throw new IndexOutOfRangeException("The capacity of the List is less than the given index.");
             return array[index];
         }
         /// <summary>
-        /// Searching for the element with the given index.
+        /// Searching for the first element in the given index.
         /// </summary>
         /// <param name="element">The element to search for.</param>
         /// <returns>The index of the element<br/>Returns -1 if didn't found it.</returns>
@@ -86,7 +90,7 @@ namespace POI
         {
             if (Contains(element))
             {
-                for (int i = 0; i < lastIndex+1; i++)
+                for (int i = 0; i < index+1; i++)
                 {
                     if (Compare(element, array[i]) == 0) return i;
                 }
@@ -100,11 +104,12 @@ namespace POI
         public void Remove(T element)
         {
             if (!Contains(element)) throw new Exception("No such element in the list exist.");
-            for (int i = 0; i < lastIndex; i++)
+            for (int i = 0; i < index; i++)
             {
                 if (Comparer<T>.Default.Compare(array[i], element) == 0)
                 {
-                    this.array[i] = default;
+                    Removing(i);
+                    return;
                 }
             }
         }
@@ -116,9 +121,9 @@ namespace POI
         public T RemoveAt(int index)
         {
             if (index < 0 || index > this.index) throw new IndexOutOfRangeException();
-            T elementToReturn = array[index];
-            array[index] = default;
-            return elementToReturn;
+            T valueToReturn = array[index];
+            Removing(index);
+            return valueToReturn;
         }
         /// <summary>
         /// Checks if the List contain the element.
@@ -143,7 +148,6 @@ namespace POI
             capacity = DEFAULT_CAPACITY;
             array = new T[capacity];
             index = DEFAULT_INDEX;
-            lastIndex = DEFAULT_INDEX+1;
             return arrayToReturn;
         }
         /// <summary>
@@ -152,13 +156,50 @@ namespace POI
         /// <returns></returns>
         public T[] ToArray()
         {
-            if (index == 0) return new T[capacity];
-            T[] arrayToReturn = new T[lastIndex+1];
-            for (int i = 0; i < lastIndex+1; i++)
+            int size = wantedCapacity >= 0 ? wantedCapacity : index;
+            if (index == 0) return new T[size];
+            T[] arrayToReturn = new T[size];
+            for (int i = 0; i < size; i++)
             {
                 arrayToReturn[i] = array[i];
             }
             return arrayToReturn;
+        }
+        /// <summary>
+        /// Returns part of the array with Beginning and End.
+        /// </summary>
+        /// <param name="startIndex">Start index.</param>
+        /// <param name="endIndex">End index.</param>
+        /// <returns>The new Array.</returns>
+        public T[] ToArray(int startIndex, int endIndex)
+        {
+            int tempCapacity = endIndex - startIndex;
+            if (tempCapacity < 0) throw new IndexOutOfRangeException("Indexes cannot be zero or negative number.");
+            T[] tempArray = new T[tempCapacity];
+            for (int i = startIndex; i < endIndex; i++)
+            {
+                tempArray[i-startIndex] = array[i];
+            }
+            return tempArray;
+        }
+        /// <summary>
+        /// Add array to the end of the List.
+        /// </summary>
+        /// <param name="array">The array to Join.</param>
+        public void JoinArray(T[] array)
+        {
+            T[] newArray = new T[this.array.Length + array.Length];
+            for (int i = 0; i < this.array.Length; i++)
+            {
+                newArray[i] = this.array[i];
+            }
+            for (int i = 0; i < array.Length; i++)
+            {
+                newArray[this.array.Length + i] = array[i];
+            }
+            this.array = newArray;
+            this.capacity = this.array.Length;
+            this.index = capacity;
         }
         //PRIVATE
         private void ExtendArray()
@@ -171,6 +212,18 @@ namespace POI
                 array[i] = oldArray[i];
             }
         }
+        private void Removing(int index)
+        {
+            if (wantedCapacity > 0)
+            {
+                array[index] = default;
+                return;
+            }
+            T[] leftPartOfTheArray = ToArray(0, index);
+            T[] rightPartOfTheArray = ToArray(index+1, array.Length);
+            this.array = leftPartOfTheArray;
+            JoinArray(rightPartOfTheArray);
+        }
         private int Compare(T element1, T element2) => Comparer<T>.Default.Compare(element1, element2);
         #endregion Methods
         #region Properties
@@ -180,16 +233,16 @@ namespace POI
             set => AddAt(index, value);
         }
         /// <summary>
+        /// Returns part of the array with Beginning and End.
+        /// </summary>
+        /// <param name="startIndex">Start index.</param>
+        /// <param name="endIndex">End index.</param>
+        /// <returns>The new Array.</returns>
+        public T[] this[int startIndex, int endIndex] => ToArray(startIndex, endIndex);
+        /// <summary>
         /// Returns the number of all elements in the List.
         /// </summary>
-        public int Count => Elements.Length;
-        /// <summary>
-        /// Returns only elements which are added to the List.
-        /// </summary>
-        public T[] Elements
-        {
-            get => ToArray().Where(element => Compare(element, default) != 0).ToArray();
-        }
+        public int Count => ToArray().Length;
         /// <summary>
         /// The capacity of the List.
         /// </summary>

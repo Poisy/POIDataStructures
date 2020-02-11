@@ -64,18 +64,39 @@ namespace POI
         /// <summary>
         /// Checks if the Dictionary contains the Key.<br/><br/>
         /// Returns: <br/>
-        ///         true - if the <see cref="POIDictionary{K, V}"/> contains the Key.<br/>
-        ///         false - if dodn't contains it.
+        ///         true - if the Dictionary contains the Key.<br/>
+        ///         false - if don't contains it.
         /// </summary>
         /// <param name="key">The key with type <see cref="K"/></param>
         /// <returns>Returns bool type with is <see cref="true"/> if contains the Key or <see cref="false"/> if didn't contain.</returns>
         public bool ContainsKey(K key)
         {
-            if (Comparer<V>.Default.Compare(this.values[GetIndex(key)], default) == 0)
+            if (Comparer<K>.Default.Compare(this.keys[GetIndex(key)], default) == 0)
             {
                 return false;
             }
             return true;
+        }
+        /// <summary>
+        /// Check if the Dictionary contains the Value.
+        /// Returns: <br/>
+        /// true - if the Dictionary contains the Value.<br/>
+        /// false - if don't contains it.
+        /// </summary>
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool ContainsValue(V value)
+        {
+            K[] tempKeys = Keys;
+            for (int i = 0; i < Keys.Length; i++)
+            {
+                if (Comparer<V>.Default.Compare(this.values[GetIndex(tempKeys[i])], value) == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         /// <summary>
         /// Removes a pair of Key and Value from the Dictionary.<br/><br/>
@@ -138,15 +159,37 @@ namespace POI
             }
             set { Add(key, value); }
         }
+        /// <summary>
+        /// Returns all Keys in the Dictionary.
+        /// </summary>
         public K[] Keys
         {
-            private set { }
             get { return this.keys.Where(key => Comparer<K>.Default.Compare(key, default) != 0).ToArray(); }
         }
+        /// <summary>
+        /// Returns all Values from the Dictionary.
+        /// </summary>
         public V[] Values
         {
-            private set { }
-            get { return this.values.Where(value => Comparer<V>.Default.Compare(value, default) != 0).ToArray(); }
+            get
+            {
+                int tempCount = 0;
+                V[] tempValues = new V[capacity];
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    if (Comparer<K>.Default.Compare(keys[i], default) != 0)
+                    {
+                        tempValues[tempCount] = values[i];
+                        tempCount++;
+                    }
+                }
+                V[] valuesToReturn = new V[tempCount];
+                for (int i = 0; i < tempCount; i++)
+                {
+                    valuesToReturn[i] = tempValues[i];
+                }
+                return valuesToReturn;
+            }
         }
         #endregion Properties
         #region IEnumerator
