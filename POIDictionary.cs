@@ -14,6 +14,7 @@ namespace POI
     {
         #region Members
         private int capacity;
+        private int count;
         private V[] values = new V[16];
         private K[] keys = new K[16];
         #endregion Members
@@ -50,6 +51,7 @@ namespace POI
                 if (Comparer<K>.Default.Compare(this.keys[GetIndex(key)], key) == 0)
                 {
                     this.values[GetIndex(key)] = value;
+                    count++;
                     return;
                 }
                 ExtendingCapacity();
@@ -59,6 +61,7 @@ namespace POI
             {
                 this.values[GetIndex(key)] = value;
                 this.keys[GetIndex(key)] = key;
+                count++;
             }
         }
         /// <summary>
@@ -113,6 +116,7 @@ namespace POI
                 V returnValue = this.values[keyIndex];
                 this.values[keyIndex] = default;
                 this.keys[keyIndex] = default;
+                count--;
                 return returnValue;
             }
             return default;
@@ -124,6 +128,7 @@ namespace POI
         {
             this.keys = new K[capacity];
             this.values = new V[capacity];
+            count = 0;
         }
         public override string ToString()
         {
@@ -191,6 +196,10 @@ namespace POI
                 return valuesToReturn;
             }
         }
+        /// <summary>
+        /// Returns the amount of all elements in the Dictionary.
+        /// </summary>
+        public int Count => count;
         #endregion Properties
         #region IEnumerator
         public class PairKeyValue

@@ -13,6 +13,7 @@ namespace POI
         #region Members
         private const int DEFAULT_CAPACITY = 16;
         private const int DEFAULT_INDEX = 0;
+        private int count = 0;
         private int index = 0;
         private int capacity = 16;
         private int wantedCapacity = -1;
@@ -34,6 +35,7 @@ namespace POI
             this.array = otherList;
             this.capacity = otherList.Length;
             this.index = capacity;
+            this.count = capacity;
         }
         #endregion Constructor
         #region Methods
@@ -48,6 +50,7 @@ namespace POI
             if (index >= capacity) ExtendArray();
             array[index] = element;
             index++;
+            count++;
         }
         /// <summary>
         /// Add element to specific place.
@@ -70,6 +73,7 @@ namespace POI
                 this.index = index+1;
             }
             array[index] = element;
+            count++;
         }
         /// <summary>
         /// Gets the element from the List.
@@ -148,6 +152,7 @@ namespace POI
             capacity = DEFAULT_CAPACITY;
             array = new T[capacity];
             index = DEFAULT_INDEX;
+            count = 0;
             return arrayToReturn;
         }
         /// <summary>
@@ -214,6 +219,7 @@ namespace POI
         }
         private void Removing(int index)
         {
+            count--;
             if (wantedCapacity > 0)
             {
                 array[index] = default;
@@ -242,7 +248,7 @@ namespace POI
         /// <summary>
         /// Returns the number of all elements in the List.
         /// </summary>
-        public int Count => ToArray().Length;
+        public int Count => count;
         /// <summary>
         /// The capacity of the List.
         /// </summary>

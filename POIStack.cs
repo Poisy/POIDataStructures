@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace POI
 {
@@ -57,12 +58,47 @@ namespace POI
         {
             return last.data;
         }
+        /// <summary>
+        /// Checks if the Stack contains the given element.
+        /// </summary>
+        /// <param name="element">The element to check for.</param>
+        /// <returns>The bool type which deppends on the result.</returns>
+        public bool Contains(T element)
+        {
+            Node tempNode = last;
+            while (tempNode != null)
+            {
+                if (Comparer<T>.Default.Compare(tempNode.data, element) == 0)
+                {
+                    return true;
+                }
+                tempNode = tempNode.previous;
+            }
+            return false;
+        }
         #endregion Methods
         #region Properties
         /// <summary>
         /// The number of elements in the Stack.
         /// </summary>
         public int Count => count;
+        /// <summary>
+        /// Get all elements from the Stack.
+        /// </summary>
+        public T[] Elements
+        {
+            get
+            {
+                T[] elementsToReturn = new T[count];
+                Node tempNode = last;
+                for (int i = 0; i < count; i++)
+                {
+                    elementsToReturn[i] = tempNode.data;
+                    tempNode = tempNode.previous;
+                }
+                return elementsToReturn;
+            }
+        }
         #endregion Properties
     }
 }

@@ -1,0 +1,74 @@
+COMPLEXITY
+
+O(1) - Constant time/Instant (fast)
+O(n) - Need to go through loop or recursion (not that fast)
+O(n^2) - Need to go through nested loop or recursion (slow)
+
+POIDictionary 
+{
+	ADD - [best case - O(1), worst case - O(n)]
+	GET - O(1)
+	CONTAINSKEY - O(1)
+	CONTAINSVALUE - O(n)
+	REMOVE - O(1)
+	CLEAR - O(1)
+	TOSTRING - O(n)
+	GETKEYS - O(n)
+	GETVALUES - O(n)
+}
+
+POIList
+{
+	ADD - [best case - O(1), worst case - O(n)]
+	ADDAT - [best case - O(1), worst case - O(n)]
+	GET - O(1)
+	FINDINDEX - O(n)
+	REMOVE - O(n)
+	REMOVEAT - O(n)
+	CONTAINS - O(n)
+	CLEAR - O(1)
+	TOARRAY - O(n)
+	JOINARRAY - O(n)
+	COUNT - O(1)
+	CAPACITY - O(1)
+}
+
+POIQueue
+{
+	ADD - O(n)
+	REMOVE - O(1)
+	PEEK - O(1)
+	CONTAINS - O(n)
+	COUNT - O(1)
+	GETELEMENTS - O(n)
+}
+
+POIStack
+{
+	ADD - O(1)
+	REMOVE - O(1)
+	PEEK - O(1)
+	CONTAINS - O(n)
+	COUNT - O(1)
+	GETELEMENTS - O(n)
+}
+
+POILinked List
+{
+	ADDFIRST - O(1)
+	ADDLAST - O(n)
+	ADDAT - O(n)
+	ADDAFTER - O(n)
+	ADDBEFORE - O(n)
+	REMOVEFIRST - O(1)
+	REMOVELAST - O(n)
+	REMOVE - O(n)
+	REMOVEAT - O(n)
+	CONTAINS - O(n)
+	INDEXOF - O(n)
+	TOARRAY - O(n)
+	SEARCHING - O(n)
+	COUNT - O(1)
+	GETFIRST - O(1)
+	GETLAST - O(n)
+}

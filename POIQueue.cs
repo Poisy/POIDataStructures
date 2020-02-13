@@ -98,7 +98,7 @@ namespace POI
         /// <summary>
         /// Array with all elements.
         /// </summary>
-        public T[] Element
+        public T[] Elements
         { 
             get
             {
