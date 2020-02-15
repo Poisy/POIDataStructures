@@ -136,9 +136,9 @@ namespace POI
         /// <returns>bool type.</returns>
         public bool Contains(T element)
         {
-            foreach (T x in array)
+            for (int i = 0; i < index; i++)
             {
-                if (Compare(x, element) == 0) return true;
+                if (Compare(array[i], element) == 0) return true;
             }
             return false;
         }
@@ -205,6 +205,25 @@ namespace POI
             this.array = newArray;
             this.capacity = this.array.Length;
             this.index = capacity;
+        }
+        /// <summary>
+        /// Returns sorted array with the elements without changing the List..
+        /// </summary>
+        /// <returns>The sorted array.</returns>
+        public T[] Sort()
+        {
+            T[] tempArray = ToArray();
+            for (int i = 0; i < tempArray.Length; i++)
+            {
+                for (int k = 0; k < tempArray.Length; k++)
+                {
+                    if (Compare(tempArray[i], tempArray[k]) < 0)
+                    {
+                        (tempArray[i], tempArray[k]) = (tempArray[k], tempArray[i]);
+                    }
+                }
+            }
+            return tempArray;
         }
         //PRIVATE
         private void ExtendArray()

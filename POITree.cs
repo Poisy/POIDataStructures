@@ -14,6 +14,7 @@ namespace POI
         private Node root = null;
         private int count;
         private Node traveler;
+        private POIList<T> allElements;
         #endregion Members
         #region Internal Class
         private class Node
@@ -79,6 +80,18 @@ namespace POI
         public void Restart()
         {
             traveler = null;
+        }
+        /// <summary>
+        /// Returns array with all elements from the Tree.
+        /// </summary>
+        /// <returns>The array with all elements..</returns>
+        public T[] ToArray()
+        {
+            allElements = new POIList<T>(count);
+            ToArray(root);
+            T[] arrayToReturn = allElements.Sort();
+            allElements = null;
+            return arrayToReturn;
         }
         //PRIVATE
         private void Add(Node newNode, Node currentNode)
@@ -250,16 +263,28 @@ namespace POI
             {
                 traveler = root;
             }
-            try
-            {
-                if (direction == 0) traveler = traveler.leftChild;
-                else traveler = traveler.rightChild;
-            }
-            catch (Exception)
-            {
-                throw new Exception("There is no next path.");
-            }
+            if (!ChechIfPathIsAvailable(direction)) throw new Exception("There is no next path.");
+            
+            if (direction == 0) traveler = traveler.leftChild;
+            else traveler = traveler.rightChild;
+            
             return traveler.data;
+        }
+        private bool ChechIfPathIsAvailable(int direction)
+        {
+            if (direction == 0)
+            {
+                if (traveler.leftChild == null) return false;
+                return true;
+            }
+            if (traveler.rightChild == null) return false;
+            return true;
+        }
+        private void ToArray(Node currentNode)
+        {
+            allElements.Add(currentNode.data);
+            if (currentNode.leftChild != null) ToArray(currentNode.leftChild); 
+            if (currentNode.rightChild != null) ToArray(currentNode.rightChild);
         }
         #endregion Methods
         #region Properties
@@ -272,9 +297,17 @@ namespace POI
         /// </summary>
         public T Right => Travel(1);
         /// <summary>
+        /// Checks if you can use Right property or not.
+        /// </summary>
+        public bool IsRightAvailable => ChechIfPathIsAvailable(1);
+        /// <summary>
         /// Go to the Left element in the Tree.
         /// </summary>
         public T Left => Travel(0);
+        /// <summary>
+        /// Checks if you can use Left property or not.
+        /// </summary>
+        public bool IsLeftAvailable => ChechIfPathIsAvailable(0);
         /// <summary>
         /// The first added element in the Tree.
         /// </summary>
