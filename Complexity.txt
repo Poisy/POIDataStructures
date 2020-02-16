@@ -84,3 +84,14 @@ POITree
 	RIGHT - O(1)
 	LEFT - O(1)
 }
+
+POISet
+{
+	ADD - O(1)
+	ADDARRAY - O(n)
+	REMOVE - O(1)
+	CONTAINS - O(1)
+	CLEARS - O(1)
+	TOARRAY - O(n)
+	COUNT - O(1)
+}
